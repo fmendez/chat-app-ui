@@ -7,6 +7,7 @@ export interface CounterState {
   status: 'idle' | 'loading' | 'failed';
 }
 
+let a= "";
 const initialState: CounterState = {
   value: 0,
   status: 'idle',

@@ -5,6 +5,9 @@ module.exports = {
       colors: {
         "background": "#fef6e4",
         "button": "#f582ae",
+        "button-hover": "#FDA2C6",
+        "button-disabled": "#FEE0EC",
+        "button-active": "#FF8D7E",
         "button-text": "#001858",
         "headline": "#001858",
         "paragraph": "#172c66",

@@ -8,13 +8,7 @@ function Entry() {
   const [message, setMessage] = useState("")
 
   const buildDataToSend = () => {
-    let currentUser: UserType = {
-      id: 1,
-      username: 'fmendez',
-      status: 'online',
-      messages: [],
-    }
-
+    let currentUser: UserType = JSON.parse(localStorage.getItem("currentUser") || "{}")
     let msg: MessageType = {
       content: `(${currentUser.username}) ${message}`
     }
@@ -23,8 +17,6 @@ function Entry() {
       message: msg,
       user: currentUser,
     }
-    console.log("Data before sending: ", data);
-
     return data;
   };
 
@@ -33,10 +25,22 @@ function Entry() {
     setMessage("")
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement> ) => {
+    if (e.key === "Enter") {
+      handleSend();
+    }
+  };
+
   return (
-    <div>
-      <input type="text" value={message} placeholder="Message" onChange={(e) => setMessage(e.target.value)} />
-      <button onClick={() => handleSend()} >SEND</button>
+    <div className="flex flex-row justify-between mb-1">
+
+      <input onKeyDown={(e) => handleKeyDown(e)}
+             className="w-full" type="text"
+             value={message} placeholder="Message"
+             onChange={(e) => setMessage(e.target.value)} />
+
+      <button className="bg-ill-secondary rounded-md p-1 ml-1 mr-1"
+              onClick={() => handleSend()} >SEND</button>
     </div>
   )
 }

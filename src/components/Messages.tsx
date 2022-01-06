@@ -25,7 +25,7 @@ function Messages() {
   }, [])
 
   return (
-    <div>
+    <div className="">
       {
         messages.map(message =>
           (<Message key={message.id} message={message} />))

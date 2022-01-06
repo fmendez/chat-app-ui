@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { sendUserMessageDataType, UserType } from "../../types";
 import { addNewUser, fetchAllUsers, removeUser, sendUserMessage } from "./usersAPI";
@@ -7,11 +7,13 @@ import { addNewUser, fetchAllUsers, removeUser, sendUserMessage } from "./usersA
 export interface UsersState {
   value: UserType[];
   status: 'idle' | 'loading' | 'failed'
+  userLoggedIn: boolean
 }
 
 const initialState: UsersState = {
   value: [],
-  status: 'idle'
+  status: 'idle',
+  userLoggedIn: false
 }
 
 export const allUserAsync = createAsyncThunk(
@@ -50,20 +52,32 @@ export const usersSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
-    // addMessage: (state, action: PayloadAction<essageType>) => {
-    //   state.value.push(action.payload)
-    // }
+    setUserAsLoggedIn: (state, action) => {
+      state.userLoggedIn = action.payload;
+    },
+    addUser: (state, action) => {
+      state.value.push(action.payload)
+    }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(sendMessageAsync.fulfilled, (state, action: PayloadAction<sendUserMessageDataType>) => {
+      .addCase(sendMessageAsync.fulfilled, (state, action) => {
         let updatedUser: UserType = state.value.filter(user => user.id === action.payload.user.id)[0];
         updatedUser.messages.push(action.payload.message);
         state.value = state.value.map(user => user.id !== updatedUser.id ? user : updatedUser)
       })
+      .addCase(addUserAsync.fulfilled, (state, action) => {
+        state.value.push(action.payload);
+        localStorage.setItem("currentUser", JSON.stringify(action.payload));
+        state.userLoggedIn = true;
+      })
+      .addCase(allUserAsync.fulfilled, (state, action) => {
+        state.value = action.payload;
+      })
   },
 });
 
-// export const { addMessage} = usersSlice.actions;
-export const selectUsers = (state: RootState) => state.users.value
+export const { setUserAsLoggedIn, addUser } = usersSlice.actions;
+export const selectUsers = (state: RootState) => state.users.value;
+export const selectUserLoggedIn = (state: RootState) => state.users.userLoggedIn;
 export default usersSlice.reducer;
